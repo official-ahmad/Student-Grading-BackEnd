@@ -1,7 +1,8 @@
 // Test script to setup admin and add student data
 const axios = require("axios");
 
-const API_URL = "http://localhost:8000/api";
+// const API_URL = "http://localhost:8000/api";
+const API_URL = "https://student-grading-backend.onrender.com/api";
 
 async function setupTestData() {
   try {
