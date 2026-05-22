@@ -15,6 +15,7 @@ app.use(
     origin: [
       "http://localhost:5173",
       "https://student-grading-front-end.vercel.app",
+      "https://student-grading-front-fgea05txd-dev-ahmad-516s-projects.vercel.app",
     ],
     credentials: true,
     methods: ["GET", "POST", "PUT", "DELETE"],
