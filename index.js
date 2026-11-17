@@ -10,13 +10,17 @@ const recommendationRoutes = require("./routes/recommendationRoutes");
 connectDB();
 
 const app = express();
+const allowedOrigins = [
+  "http://localhost:5173",
+  "https://student-grading-frontend.vercel.app",
+  "https://student-grading-front-end.vercel.app",
+  "https://student-grading-front-fgea05txd-dev-ahmad-516s-projects.vercel.app",
+  process.env.FRONTEND_URL,
+].filter(Boolean);
+
 app.use(
   cors({
-    origin: [
-      "http://localhost:5173",
-      "https://student-grading-front-end.vercel.app",
-      "https://student-grading-front-fgea05txd-dev-ahmad-516s-projects.vercel.app",
-    ],
+    origin: allowedOrigins,
     credentials: true,
     methods: ["GET", "POST", "PUT", "DELETE"],
   }),
@@ -30,7 +34,7 @@ app.get("/", (req, res) => {
   res.send("Student Grading System API is running");
 });
 
-const PORT = process.env.PORT;
+const PORT = process.env.PORT || 8004;
 app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);
 });

@@ -1,23 +1,33 @@
 // Test script to setup admin and add student data
+require("dotenv").config();
 const axios = require("axios");
 
-// const API_URL = "http://localhost:8000/api";
-const API_URL = "https://student-grading-backend.onrender.com/api";
+const API_URL = process.env.API_URL || "http://localhost:8000/api";
+const adminCredentials = {
+  username: process.env.ADMIN_USERNAME,
+  password: process.env.ADMIN_PASSWORD,
+};
 
 async function setupTestData() {
   try {
+    if (!adminCredentials.username || !adminCredentials.password) {
+      throw new Error("ADMIN_USERNAME and ADMIN_PASSWORD must be set in .env");
+    }
+
     console.log("Setting up test data...\n");
 
-    // 1. Create admin account
-    console.log("1. Creating admin account...");
-    const adminRes = await axios.post(`${API_URL}/admin/setup`, {
-      username: "admin",
-      password: "Admin@123",
-    });
+    // 1. Create the configured admin, or log in if it already exists.
+    console.log("1. Getting admin account...");
+    let adminRes;
+    try {
+      adminRes = await axios.post(`${API_URL}/admin/setup`, adminCredentials);
+    } catch (error) {
+      if (error.response?.status !== 400) throw error;
+      adminRes = await axios.post(`${API_URL}/admin/login`, adminCredentials);
+    }
     const adminToken = adminRes.data.token;
-    console.log("✅ Admin created successfully");
-    console.log("   Username: admin");
-    console.log("   Password: Admin@123\n");
+    console.log("Admin account is ready.");
+    console.log(`   Username: ${adminCredentials.username}\n`);
 
     const headers = { Authorization: `Bearer ${adminToken}` };
 
@@ -116,8 +126,7 @@ async function setupTestData() {
 
     console.log("\n✅ Test data setup completed!");
     console.log("\nYou can now login with:");
-    console.log("  Username: admin");
-    console.log("  Password: Admin@123");
+    console.log("  Use ADMIN_USERNAME and ADMIN_PASSWORD from .env");
   } catch (error) {
     console.error("Error:", error.response?.data || error.message);
   }
